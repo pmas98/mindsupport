@@ -1,11 +1,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from api.models import Message, Usuario, Sala
 from api.v1.views import SaveMessageView
-from firebase_admin import storage
-import base64
-import tempfile
 
 class TextRoomConsumer(WebsocketConsumer):
     def connect(self):

@@ -28,9 +28,3 @@ class Sala(models.Model):
 class RoomUser(models.Model):
     user = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     room = models.ForeignKey(Sala, on_delete=models.CASCADE)
-
-class Message(models.Model):
-    sender = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    room = models.ForeignKey(Sala, on_delete=models.CASCADE)
-    text = models.TextField()
-    audio_url = models.URLField(null=True, blank=True)  # URL de Audio do Firebase
