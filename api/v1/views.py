@@ -11,6 +11,8 @@ from datetime import datetime
 from firebase_admin import firestore, storage
 import tempfile
 from datetime import timedelta
+from channels.generic.websocket import WebsocketConsumer
+
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny] 
 
@@ -133,6 +135,46 @@ class BlockUserView(APIView):
         response_data = {'message': 'User blocked successfully!'}
         return Response(response_data, status=status.HTTP_200_OK)
 
+class UploadAudioView(APIView, WebsocketConsumer):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        audio = request.data.get('audio')
+        room = request.data.get('room')
+        user = request.user
+        username = request.data.get('username')
+
+        audio_file = request.FILES['audio']
+
+        db = firestore.client()
+        bucket_name = "mindsupport-5da6e.appspot.com"
+        bucket = storage.bucket(bucket_name)
+        blob = None
+        if audio:
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                tmp.write(audio.read())
+                tmp_file_path = tmp.name
+                name = f"{user}-{room}-{datetime.now()}.mp3"
+                blob = bucket.blob(name)
+                with open(tmp_file_path, 'rb') as tmp_file:
+                    blob.upload_from_file(tmp_file)
+                try:
+                    audio_url = blob.generate_signed_url(expiration=timedelta(days=365), method='GET')
+                    db.collection('roomChat').add({
+                        'userid': user.id,
+                        'username': username,
+                        'room': room,
+                        'message': '',
+                        'timestamp': datetime.now(),
+                        'audio': audio_url if blob else ''
+                    })
+                    print("Message added successfully.")
+                    return Response({'audio': audio_url if blob else ''}, status=status.HTTP_200_OK)
+                    
+                except Exception as e:
+                    print(f"Error adding message: {e}")
+                return Response({'audio': blob.public_url}, status=status.HTTP_200_OK)
+            
 def SaveMessageView(userid, username, room, message, audio):
     db = firestore.client()
     bucket_name = "mindsupport-5da6e.appspot.com"

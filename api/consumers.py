@@ -29,7 +29,8 @@ class TextRoomConsumer(WebsocketConsumer):
         message = text_data_json['message']
         user_id = text_data_json.get('user_id')
         username = text_data_json.get('username')
-        print(text_data)
+        audio = text_data_json.get('audio')
+
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
@@ -38,7 +39,7 @@ class TextRoomConsumer(WebsocketConsumer):
                 'message': message,
                 'user_id': user_id,
                 'username': username,
-                'audio': text_data_json.get('audio')
+                'audio': audio
             }
         )
 
@@ -48,23 +49,11 @@ class TextRoomConsumer(WebsocketConsumer):
         user_id = event.get('user_id', None)  
         audio = event.get('audio', None)
 
-        if audio is not None:
-            audio_data = None
-            with open(audio, 'rb') as file:
-                audio_data = file.read()
-            result = SaveMessageView(userid=user_id, username=username, room=int(self.room_name), message=message, audio=audio_data)
-            self.send(text_data=json.dumps({
-            'message': '',
+        SaveMessageView(userid=user_id,username=username, room=int(self.room_name), message=message, audio=None)
+
+        self.send(text_data=json.dumps({
+            'message': message,
             'user_id': user_id,
             'username': username,
-            'audio': result
-            }))
-            return 
-        else:
-            result = SaveMessageView(userid=user_id,username=username, room=int(self.room_name), message=message, audio=None)
-
-            self.send(text_data=json.dumps({
-                'message': message,
-                'user_id': user_id,
-                'username': username
-            }))
+            'audio': audio
+        }))
