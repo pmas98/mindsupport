@@ -85,6 +85,11 @@ Payload:
         "user": 2,
         "block_reason": "É um fuleragi"
     }
+- `/api/v1/upload-audio/ - POST`: Envia um audio. 
+    Payload: 
+    {
+        "audio": binary
+    }
 - `/api/v1/roomMessages/ - GET`: Pega as mensagens de uma sala. 
     Payload: 
     [
@@ -117,5 +122,5 @@ O formato da payload é
     "username": "124",
     "user_id": 6,
     "message": "",
-    "audio": "/path/to/file"
+    "audio": null
 }
