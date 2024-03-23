@@ -12,7 +12,7 @@ Para usar a API do mindsupport:
 
 ## Endpoints
 
-The following endpoints are available in the MindSupport API:
+Os seguintes endpoints estão disponíveis na API:
 
 - `/api/v1/register/ - POST`: Cria um usuário. 
     Payload: {
