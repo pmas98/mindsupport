@@ -12,7 +12,6 @@ from firebase_admin import firestore, storage
 import tempfile
 from datetime import timedelta
 from channels.generic.websocket import WebsocketConsumer
-
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny] 
 
