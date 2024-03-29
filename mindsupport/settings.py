@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "mindsupport-production.up.railway.app",
+    "127.0.0.1"
 ]
 
 
@@ -151,5 +152,5 @@ CHANNEL_LAYERS = {
         }
     }
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "*",
 ]
