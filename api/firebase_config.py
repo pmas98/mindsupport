@@ -1,14 +1,17 @@
 from django.apps import AppConfig
 import firebase_admin
 from firebase_admin import credentials
+import dotenv, os, json
 
+# Load environment variables from .env file
+dotenv.load_dotenv()
 class MyAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'myapp'
 
     def ready(self):
-        # Path to the JSON file downloaded from Firebase Console
-        cred = credentials.Certificate("/home/pedro/Documents/uniforDesWeb/mindsupport/api/mindsupport-5da6e-firebase-adminsdk-jtayr-8d86846a2c.json")
+        encoded_json = os.environ.get("FIREBASE_JSON")
+        json_data = json.loads(encoded_json)
+        cred = credentials.Certificate(json_data)
         
-        # Initialize Firebase Admin SDK
         firebase_admin.initialize_app(cred)
