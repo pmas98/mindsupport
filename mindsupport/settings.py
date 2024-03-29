@@ -25,10 +25,7 @@ SECRET_KEY = 'django-insecure-a&$ptm^%q1atg2moh8)c#1qc1zq@un0*0!%1-w$wts)a-%1rk@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "mindsupport-production.up.railway.app",
-    "127.0.0.1"
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -151,6 +148,25 @@ CHANNEL_LAYERS = {
         'BACKEND': "channels.layers.InMemoryChannelLayer"
         }
     }
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "PATCH",
+    "POST"
+]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with"
+]
 CORS_ALLOWED_ORIGINS = [
     "*",
 ]
