@@ -167,6 +167,3 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with"
 ]
-CORS_ALLOWED_ORIGINS = [
-    "*",
-]
