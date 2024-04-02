@@ -1,6 +1,8 @@
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
 from api.models import Usuario
+
+
 class EmailAuthBackend(ModelBackend):
     """
     Custom authentication backend that allows authentication using email.

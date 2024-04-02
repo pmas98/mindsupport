@@ -17,15 +17,9 @@ from api.consumers import TextRoomConsumer
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
 
 websocket_urlpatterns = [
-    re_path(r'^ws/(?P<sala>[^/]+)/$', TextRoomConsumer.as_asgi()),
+    re_path(r"^ws/(?P<sala>[^/]+)/$", TextRoomConsumer.as_asgi()),
 ]
 
 application = ProtocolTypeRouter(
-    {
-        "http": get_asgi_application(),
-        'websocket':
-            URLRouter(
-                websocket_urlpatterns
-            )
-    }
+    {"http": get_asgi_application(), "websocket": URLRouter(websocket_urlpatterns)}
 )
