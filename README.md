@@ -87,9 +87,7 @@ Payload:
     }
 - `/api/v1/upload-audio/ - POST`: Envia um audio. 
     Payload: 
-    {
-        "audio": binary
-    }
+    multipart contendo audio:binary, room: int, username: string
 - `/api/v1/roomMessages/ - GET`: Pega as mensagens de uma sala. 
     Payload: 
     [
@@ -110,7 +108,11 @@ Payload:
             "hour": "21:47:24"
         }
     ]
-
+- `/api/v1/token/refresh/ - POST`: Faz o refresh no token. 
+    Payload: 
+    {
+        "refresh": string,
+    }
 ## Web Sockets
 
 WebSockets são usadas para os chats dentro das salas.
