@@ -2,7 +2,6 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework.authtoken.models import Token
 from api.v1.serializers import (
     UserRegistrationSerializer,
     LoginSerializer,
@@ -161,8 +160,6 @@ class UploadAudioView(APIView, WebsocketConsumer):
         room = request.data.get("room")
         user = request.user
         username = request.data.get("username")
-
-        audio_file = request.FILES["audio"]
 
         db = firestore.client()
         bucket_name = "mindsupport-5da6e.appspot.com"

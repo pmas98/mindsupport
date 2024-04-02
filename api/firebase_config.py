@@ -1,7 +1,9 @@
 from django.apps import AppConfig
 import firebase_admin
 from firebase_admin import credentials
-import dotenv, os, json
+import dotenv
+import os
+import json
 
 # Load environment variables from .env file
 dotenv.load_dotenv()

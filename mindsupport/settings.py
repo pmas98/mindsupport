@@ -84,10 +84,10 @@ WSGI_APPLICATION = "mindsupport.wsgi.application"
 JWT_AUTH = {
     "JWT_PAYLOAD_HANDLER": "api.utils.custom_jwt_payload_handler",
     "JWT_EXPIRATION_DELTA": datetime.timedelta(hours=1),
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    "JWT_ALLOW_REFRESH": True,
+    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=7),
 }
-SIMPLE_JWT ={
+SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": datetime.timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
 }
