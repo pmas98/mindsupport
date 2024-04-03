@@ -27,6 +27,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run profiling
+        env:
+          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
         run: |
           python -m cProfile -o profile.prof manage.py test
           python -m pstats profile.prof -q -r
