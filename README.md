@@ -113,6 +113,9 @@ Payload:
     {
         "refresh": string,
     }
+
+- `/api/v1/user/delete/ - DELETE`: Deleta um usuário. 
+    
 ## Web Sockets
 
 WebSockets são usadas para os chats dentro das salas.

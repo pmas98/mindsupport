@@ -18,6 +18,27 @@ import tempfile
 from datetime import timedelta
 from channels.generic.websocket import WebsocketConsumer
 
+class UserDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user_id = request.user.id
+        user = Usuario.objects.get(username=request.user)
+        user.delete()
+        
+        db = firestore.client()
+        
+        collectionName = "roomChat"
+        print(user_id)
+        
+        docs = db.collection(collectionName).where("userId", "==", user_id).stream()
+
+        for doc in docs:
+            doc_ref = db.collection(collectionName).document(doc.id)
+            doc_ref.delete()
+            print(f"Document {doc.id} deleted successfully.")
+        
+        return Response({"message": "User deleted successfully!"}, status=status.HTTP_200_OK)
 
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny]
