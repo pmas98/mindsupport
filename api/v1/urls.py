@@ -12,7 +12,7 @@ from api.v1.views import (
     BlockUserView,
     GetAllMessagesView,
     UploadAudioView,
-    UserDeleteView
+    UserDeleteView,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
