@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     "api.apps.MindSupportConfig",
     "channels",
     "corsheaders",
+    "rest_framework",  # Add rest_framework here
     "api",
 ]
+
 
 AUTHENTICATION_BACKENDS = [
     "api.backends.EmailAuthBackend",
