@@ -1,2 +1,1 @@
-web: gunicorn mindsupport.wsgi --log-file -
-web: daphne mindsupport.asgi:application
+release: python manage.py migrate && daphne -b 0.0.0.0 -p $PORT mindsupport.asgi:application
