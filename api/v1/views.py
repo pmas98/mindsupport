@@ -202,17 +202,6 @@ class UploadAudioView(APIView, WebsocketConsumer):
                     audio_url = blob.generate_signed_url(
                         expiration=timedelta(days=365), method="GET"
                     )
-                    db.collection("roomChat").add(
-                        {
-                            "user_id": user.id,
-                            "username": username,
-                            "room": room,
-                            "message": "",
-                            "timestamp": datetime.now(),
-                            "audio": audio_url if blob else "",
-                        }
-                    )
-                    print("Message added successfully.")
                     return Response(
                         {"audio": audio_url if blob else ""}, status=status.HTTP_200_OK
                     )
