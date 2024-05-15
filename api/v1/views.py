@@ -255,7 +255,7 @@ def SaveMessageView(userid, username, room, message, audio):
     try:
         # Add message to Firestore
         db.collection("roomChat").add({
-            "userid": userid,
+            "user_id": userid,
             "username": username,
             "room": room,
             "message": message,
