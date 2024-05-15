@@ -204,7 +204,7 @@ class UploadAudioView(APIView, WebsocketConsumer):
                     )
                     db.collection("roomChat").add(
                         {
-                            "userid": user.id,
+                            "user_id": user.id,
                             "username": username,
                             "room": room,
                             "message": "",
