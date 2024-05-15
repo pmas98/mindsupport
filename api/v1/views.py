@@ -223,10 +223,11 @@ class GetAllMessagesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        room = request.data.get('room')
-        limit = request.data.get('limit')
+        room = request.query_params.get('room')
+        limit = request.query_params.get('limit')
+        print(room)
         db = firestore.client()
-        messages = db.collection('roomChat').where('room', '==', int(room)).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(limit).stream()
+        messages = db.collection('roomChat').where('room', '==', room).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(int(limit)).stream()
         data = []
         for message in messages:
             message_data = message.to_dict()
