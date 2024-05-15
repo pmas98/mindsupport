@@ -12,80 +12,226 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Moderador',
+            name="Moderador",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reason', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("reason", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='Tema',
+            name="Tema",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='Usuario',
+            name="Usuario",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('password', models.CharField(max_length=128)),
-                ('block_reason', models.TextField(blank=True, max_length=255, null=True)),
-                ('groups', models.ManyToManyField(related_name='usuarios', to='auth.group')),
-                ('user_permissions', models.ManyToManyField(related_name='usuarios', to='auth.permission')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("password", models.CharField(max_length=128)),
+                (
+                    "block_reason",
+                    models.TextField(blank=True, max_length=255, null=True),
+                ),
+                (
+                    "groups",
+                    models.ManyToManyField(related_name="usuarios", to="auth.group"),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        related_name="usuarios", to="auth.permission"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'abstract': False,
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "abstract": False,
             },
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='Sala',
+            name="Sala",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('moderator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.moderador')),
-                ('theme', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.tema')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "moderator",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.moderador"
+                    ),
+                ),
+                (
+                    "theme",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.tema"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RoomUser',
+            name="RoomUser",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('room', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.sala')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.usuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "room",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.sala"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.usuario"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='moderador',
-            name='user',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='api.usuario'),
+            model_name="moderador",
+            name="user",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, to="api.usuario"
+            ),
         ),
         migrations.CreateModel(
-            name='Message',
+            name="Message",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField()),
-                ('audio_url', models.URLField(blank=True, null=True)),
-                ('room', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.sala')),
-                ('sender', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.usuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField()),
+                ("audio_url", models.URLField(blank=True, null=True)),
+                (
+                    "room",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.sala"
+                    ),
+                ),
+                (
+                    "sender",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.usuario"
+                    ),
+                ),
             ],
         ),
     ]
