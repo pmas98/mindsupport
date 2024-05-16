@@ -112,8 +112,8 @@ class SalasSerializer(serializers.ModelSerializer):
     def get_date_created(self, sala):
         return sala.created_at  # Assuming 'created_at' is the field for creation date
 
-    def get_user_in_room(self, sala, context):
-        user = context.get('user')  # Access user from context
+    def get_user_in_room(self, sala):
+        user = self.context.get('user')  # Access user from context
         if user and user.id is not None and sala.roomuser_set.filter(user_id=user.id).exists():
             return True
         return False

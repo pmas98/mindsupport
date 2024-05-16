@@ -107,7 +107,7 @@ class RoomsView(APIView):
             rooms = Sala.objects.all()
 
         serializer = SalasSerializer(rooms, many=True, context={'user': user})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)  # Don't forget to import Response from rest_framework
     def post(self, request):
         serializer = SalasSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
