@@ -202,17 +202,6 @@ class UploadAudioView(APIView, WebsocketConsumer):
                     audio_url = blob.generate_signed_url(
                         expiration=timedelta(days=365), method="GET"
                     )
-                    db.collection("roomChat").add(
-                        {
-                            "userid": user.id,
-                            "username": username,
-                            "room": room,
-                            "message": "",
-                            "timestamp": datetime.now(),
-                            "audio": audio_url if blob else "",
-                        }
-                    )
-                    print("Message added successfully.")
                     return Response(
                         {"audio": audio_url if blob else ""}, status=status.HTTP_200_OK
                     )
@@ -227,67 +216,58 @@ def SaveMessageView(userid, username, room, message, audio):
     bucket_name = "mindsupport-5da6e.appspot.com"
     bucket = storage.bucket(bucket_name)
     blob = None
+
     if audio:
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            tmp.write(audio)
-            tmp_file_path = tmp.name
+        try:
+            # Create a temporary file to write audio data
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                tmp.write(audio)
+                tmp_file_path = tmp.name
+
+            # Create blob and upload audio file
             name = f"{username}-{room}-{datetime.now()}.mp3"
-            blob = bucket.blob(name)
             blob = bucket.blob(name)
             with open(tmp_file_path, "rb") as tmp_file:
                 blob.upload_from_file(tmp_file)
-            try:
-                audio_url = blob.generate_signed_url(
-                    expiration=timedelta(days=365), method="GET"
-                )
-                db.collection("roomChat").add(
-                    {
-                        "user_id": userid,
-                        "username": username,
-                        "room": room,
-                        "message": message,
-                        "timestamp": datetime.now(),
-                        "audio": audio_url if blob else "",
-                    }
-                )
-                print("Message added successfully.")
-                return audio_url if blob else ""
 
-            except Exception as e:
-                print(f"Error adding message: {e}")
-            return blob.public_url
-    else:
-        try:
-            db.collection("roomChat").add(
-                {
-                    "user_id": userid,
-                    "username": username,
-                    "room": room,
-                    "message": message,
-                    "timestamp": datetime.now(),
-                    "audio": blob.public_url if blob else "",
-                }
-            )
-            print("Message added successfully.")
+            # Generate signed URL for audio file
+            audio_url = blob.generate_signed_url(expiration=timedelta(days=365), method="GET")
 
         except Exception as e:
-            print(f"Error adding message: {e}")
+            print(f"Error uploading audio file: {e}")
+            audio_url = ""
+
+        finally:
+            # Clean up temporary file
+            os.remove(tmp_file_path)
+
+    try:
+        # Add message to Firestore
+        db.collection("roomChat").add({
+            "user_id": userid,
+            "username": username,
+            "room": room,
+            "message": message,
+            "timestamp": datetime.now(),
+            "audio": audio_url if audio else "",
+        })
+        print("Message added successfully.")
+
+    except Exception as e:
+        print(f"Error adding message: {e}")
+
+    return audio_url if audio else ""
 
 
 class GetAllMessagesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        room = request.data.get("room")
-        limit = request.data.get("limit")
+        room = request.query_params.get('room')
+        limit = request.query_params.get('limit')
+
         db = firestore.client()
-        messages = (
-            db.collection("roomChat")
-            .where("room", "==", int(room))
-            .order_by("timestamp", direction=firestore.Query.DESCENDING)
-            .limit(limit)
-            .stream()
-        )
+        messages = db.collection('roomChat').where('room', '==', int(room)).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(int(limit)).stream()
         data = []
         for message in messages:
             message_data = message.to_dict()
