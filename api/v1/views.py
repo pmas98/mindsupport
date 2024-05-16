@@ -123,8 +123,11 @@ class RoomUserView(APIView):
         user = request.user
         usuario_id = Usuario.objects.get(username=user).id
         request.data["usuario"] = usuario_id
-        userInRoom = RoomUser.objects.get_object_or_none(room=request.data["sala"], user=usuario_id)
-        
+        try:
+            userInRoom = RoomUser.objects.get_object_or_none(room=request.data["sala"], user=usuario_id)
+        except RoomUser.DoesNotExist:
+            userInRoom = None
+
         if userInRoom:
             response_data = {"message": "User already in room!"}
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
