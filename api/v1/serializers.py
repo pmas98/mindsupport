@@ -118,7 +118,7 @@ class SalasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sala
-        fields = ("id", "theme", "room_capacity", "date_created")
+        fields = ("id", "theme", "room_capacity", "date_created", "user_in_room")
         read_only_fields = ('date_created',) 
 
 class RoomUserSerializer(serializers.ModelSerializer):
