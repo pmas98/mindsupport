@@ -123,6 +123,12 @@ class RoomUserView(APIView):
         user = request.user
         usuario_id = Usuario.objects.get(username=user).id
         request.data["usuario"] = usuario_id
+        userInRoom = RoomUser.objects.get(room=request.data["sala"], user=usuario_id)
+        
+        if userInRoom:
+            response_data = {"message": "User already in room!"}
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = RoomUserSerializer(
             data=request.data, context={"usuario": usuario_id}
         )
