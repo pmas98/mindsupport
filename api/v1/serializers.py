@@ -103,14 +103,18 @@ class TemaSerializer(serializers.ModelSerializer):
 
 class SalasSerializer(serializers.ModelSerializer):
     room_capacity = serializers.SerializerMethodField()
+    date_created = serializers.SerializerMethodField()
 
     def get_room_capacity(self, sala):
         return sala.roomuser_set.count()
 
+    def get_date_created(self, sala):
+        return sala.created_at  # Assuming 'created_at' is the field for creation date
+
     class Meta:
         model = Sala
-        fields = ("id", "theme", "room_capacity")
-
+        fields = ("id", "theme", "room_capacity", "date_created")
+        read_only_fields = ('date_created',) 
 
 class RoomUserSerializer(serializers.ModelSerializer):
     sala = serializers.PrimaryKeyRelatedField(queryset=Sala.objects.all())

@@ -242,7 +242,7 @@ def SaveMessageView(userid, username, room, message, audio):
                 )
                 db.collection("roomChat").add(
                     {
-                        "userid": userid,
+                        "user_id": userid,
                         "username": username,
                         "room": room,
                         "message": message,
@@ -260,7 +260,7 @@ def SaveMessageView(userid, username, room, message, audio):
         try:
             db.collection("roomChat").add(
                 {
-                    "userid": userid,
+                    "user_id": userid,
                     "username": username,
                     "room": room,
                     "message": message,
