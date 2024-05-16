@@ -98,14 +98,16 @@ class RoomsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        user = request.user  # Access the authenticated user
+
         theme_id = request.query_params.get("theme")
         if theme_id:
             rooms = Sala.objects.filter(theme_id=theme_id)
         else:
             rooms = Sala.objects.all()
-        serializer = SalasSerializer(rooms, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
+        serializer = SalasSerializer(rooms, many=True, context={'user': user})
+        return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self, request):
         serializer = SalasSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

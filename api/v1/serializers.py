@@ -104,12 +104,17 @@ class TemaSerializer(serializers.ModelSerializer):
 class SalasSerializer(serializers.ModelSerializer):
     room_capacity = serializers.SerializerMethodField()
     date_created = serializers.SerializerMethodField()
-
+    user_in_room = serializers.SerializerMethodField()
+    
     def get_room_capacity(self, sala):
         return sala.roomuser_set.count()
 
     def get_date_created(self, sala):
         return sala.created_at  # Assuming 'created_at' is the field for creation date
+
+    def get_user_in_room(self, sala):
+        if self.user.id is not None and sala.roomuser_set.filter(user_id=self.user.id).exists():
+            return True
 
     class Meta:
         model = Sala
