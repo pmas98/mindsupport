@@ -123,7 +123,7 @@ class RoomUserView(APIView):
         user = request.user
         usuario_id = Usuario.objects.get(username=user).id
         request.data["usuario"] = usuario_id
-        userInRoom = RoomUser.objects.get(room=request.data["sala"], user=usuario_id)
+        userInRoom = RoomUser.objects.get_object_or_none(room=request.data["sala"], user=usuario_id)
         
         if userInRoom:
             response_data = {"message": "User already in room!"}
