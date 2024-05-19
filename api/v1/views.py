@@ -162,11 +162,26 @@ class RemoveUserRoomView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        db = firestore.client()
         room_id = request.data.get("sala")
         user = request.user
         usuario = Usuario.objects.get(username=user).id
         sala = Sala.objects.get(id=room_id)
         room_user = RoomUser.objects.filter(room=sala, user=usuario).first()
+
+        room_chat_ref = db.collection('roomChat')
+
+        # Create a query to fetch documents with the same user ID and room ID
+        query = room_chat_ref.where('user_id', '==', user.id).where('room', '==', room_id)
+
+        # Get the documents that match the query
+        docs = query.stream()
+
+        # Iterate over the documents and delete them
+        for doc in docs:
+            doc_ref = room_chat_ref.document(doc.id)
+            doc_ref.delete()
+            
         if room_user:
             room_user.delete()
             response_data = {"message": "RoomUser deleted successfully!"}
