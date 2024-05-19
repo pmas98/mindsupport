@@ -17,6 +17,9 @@ from firebase_admin import firestore, storage
 import tempfile
 from datetime import timedelta
 from channels.generic.websocket import WebsocketConsumer
+from django.contrib.auth import logout
+from django.contrib.auth.views import LogoutView
+from django.urls import reverse_lazy
 
 class UserColorView(APIView):
     permission_classes = [IsAuthenticated]
@@ -88,6 +91,10 @@ class UserLoginView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class UserLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return super().get(request, *args, **kwargs)
 
 class ThemesView(APIView):
     permission_classes = [AllowAny]
@@ -98,9 +105,8 @@ class ThemesView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = TemaSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        name = request.data.get("name")
+        Tema.objects.create(name=name)
         response_data = {"message": "Theme created successfully!"}
         return Response(response_data, status=status.HTTP_201_CREATED)
 
