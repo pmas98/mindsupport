@@ -18,6 +18,17 @@ import tempfile
 from datetime import timedelta
 from channels.generic.websocket import WebsocketConsumer
 
+class UserColorView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        color = request.data.get("color")
+        usuario = Usuario.objects.get(username=user)
+        usuario.color = color
+        usuario.save()
+        response_data = {"message": "User color updated successfully!"}
+        return Response(response_data, status=status.HTTP_200_OK)
 
 class UserDeleteView(APIView):
     permission_classes = [IsAuthenticated]
@@ -169,10 +180,19 @@ class UserView(APIView):
         data = {
             "id": usuario.id,
             "username": usuario.username,
+            "color": usuario.color,
             "is_moderator": True if (moderador and moderador.active) else False,
             "created_at": datetime.strftime(usuario.date_joined, "%b %d"),
         }
         return Response(data, status=status.HTTP_200_OK)
+    def patch(self, request):
+        user = request.user
+        nickname = request.data.get("nickname")
+        usuario = Usuario.objects.get(username=user)
+        usuario.username = nickname
+        usuario.save()
+        response_data = {"message": "User updated successfully!"}
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class BlockUserView(APIView):

@@ -8,6 +8,7 @@ class Usuario(AbstractUser):
     blocked = models.BooleanField(default=False)
     block_reason = models.TextField(blank=True, null=True, max_length=255)
     groups = models.ManyToManyField("auth.Group", related_name="usuarios")
+    color = models.CharField(max_length=10, default="bg-red-400")
     user_permissions = models.ManyToManyField(
         "auth.Permission", related_name="usuarios"
     )
