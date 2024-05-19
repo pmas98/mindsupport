@@ -172,13 +172,14 @@ class RemoveUserRoomView(APIView):
         room_chat_ref = db.collection('roomChat')
 
         # Create a query to fetch documents with the same user ID and room ID
-        query = room_chat_ref.where('user_id', '==', user.id).where('room', '==', room_id)
-
+        query = room_chat_ref.where('user_id', '==', int(user.id)).where('room', '==', int(room_id))
+        print(user.id, room_id)
         # Get the documents that match the query
         docs = query.stream()
 
         # Iterate over the documents and delete them
         for doc in docs:
+            print(f'Deleting document {doc.id}')
             doc_ref = room_chat_ref.document(doc.id)
             doc_ref.delete()
             
