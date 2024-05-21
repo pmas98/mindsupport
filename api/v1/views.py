@@ -301,7 +301,7 @@ class UploadAudioView(APIView, WebsocketConsumer):
                 return Response({"audio": blob.public_url}, status=status.HTTP_200_OK)
 
 
-def SaveMessageView(userid, username, room, message, audio):
+def SaveMessageView(userid, username, room, message, audio, is_moderator):
     db = firestore.client()
     bucket_name = "mindsupport-5da6e.appspot.com"
     bucket = storage.bucket(bucket_name)
@@ -340,6 +340,7 @@ def SaveMessageView(userid, username, room, message, audio):
             "message": message,
             "timestamp": datetime.now(),
             "audio": audio_url if audio else "",
+            "is_moderator": is_moderator,
         })
         print("Message added successfully.")
 
