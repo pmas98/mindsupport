@@ -60,7 +60,7 @@ class ModeradorRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
 
-        moderador = Moderador(user=user, reason=validated_data["reason"], active=False)
+        moderador = Moderador(user=user, reason=validated_data["reason"], active=True)
         moderador.save()
         return moderador
 

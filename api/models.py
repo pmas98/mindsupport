@@ -20,7 +20,7 @@ class Usuario(AbstractUser):
 class Moderador(models.Model):
     user = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     reason = models.TextField()
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
 
 class Tema(models.Model):

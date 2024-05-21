@@ -44,7 +44,6 @@ class UserDeleteView(APIView):
         db = firestore.client()
 
         collectionName = "roomChat"
-        print(user_id)
 
         docs = db.collection(collectionName).where("userId", "==", user_id).stream()
 
@@ -173,7 +172,7 @@ class RemoveUserRoomView(APIView):
 
         # Create a query to fetch documents with the same user ID and room ID
         query = room_chat_ref.where('user_id', '==', int(user.id)).where('room', '==', int(room_id))
-        print(user.id, room_id)
+
         # Get the documents that match the query
         docs = query.stream()
 
@@ -191,6 +190,43 @@ class RemoveUserRoomView(APIView):
             response_data = {"message": "RoomUser not found!"}
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
 
+class RemoveUserIdRoomView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        db = firestore.client()
+        room_id = request.data.get("sala")
+        user = request.user
+        
+        if user.is_moderator:
+            user_id = request.data.get("user")
+            usuarioADeletar = Usuario.objects.get(id=user_id)
+            
+            sala = Sala.objects.get(id=room_id)
+            room_user = RoomUser.objects.filter(room=sala, user=usuarioADeletar).first()
+
+            room_chat_ref = db.collection('roomChat')
+
+            # Create a query to fetch documents with the same user ID and room ID
+            query = room_chat_ref.where('user_id', '==', int(user_id)).where('room', '==', int(room_id))
+            print(user.id, room_id)
+            # Get the documents that match the query
+            docs = query.stream()
+
+            # Iterate over the documents and delete them
+            for doc in docs:
+                print(f'Deleting document {doc.id}')
+                doc_ref = room_chat_ref.document(doc.id)
+                doc_ref.delete()
+                
+            if room_user:
+                room_user.delete()
+                response_data = {"message": "RoomUser deleted successfully!"}
+                return Response(response_data, status=status.HTTP_200_OK)
+            else:
+                response_data = {"message": "RoomUser not found!"}
+                return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+
 
 class UserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -203,9 +239,10 @@ class UserView(APIView):
             "id": usuario.id,
             "username": usuario.username,
             "color": usuario.color,
-            "is_moderator": True if (moderador and moderador.active) else False,
+            "is_moderator": True if (moderador) else False,
             "created_at": datetime.strftime(usuario.date_joined, "%b %d"),
         }
+
         return Response(data, status=status.HTTP_200_OK)
     def patch(self, request):
         user = request.user

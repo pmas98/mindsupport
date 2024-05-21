@@ -13,7 +13,8 @@ from api.v1.views import (
     GetAllMessagesView,
     UploadAudioView,
     UserDeleteView,
-    UserColorView
+    UserColorView,
+    RemoveUserIdRoomView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -36,6 +37,7 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("user/delete/", UserDeleteView.as_view(), name="user_delete"),
     path("user/color/", UserColorView.as_view(), name="user_color"),
+    path("moderator/removeUser/", RemoveUserIdRoomView.as_view(), name="moderator_remove_user"),
 ]
 
 # TODO: Adicionar as views para o moderador deletar uma mensagem e bloquear um usuário
