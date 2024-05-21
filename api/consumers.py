@@ -56,7 +56,8 @@ class TextRoomConsumer(WebsocketConsumer):
             room=int(self.room_name),
             message=message,
             is_moderator=is_moderator,
-            audio=audio,
+            audio=None,
+            audio_url=audio
         )
 
         self.send(
