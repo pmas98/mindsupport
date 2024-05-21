@@ -196,9 +196,10 @@ class RemoveUserIdRoomView(APIView):
     def post(self, request):
         db = firestore.client()
         room_id = request.data.get("sala")
+        is_moderator = request.data.get("is_moderator")
         user = request.user
         
-        if user.is_moderator:
+        if is_moderator:
             user_id = request.data.get("user")
             usuarioADeletar = Usuario.objects.get(id=user_id)
             
