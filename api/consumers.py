@@ -29,13 +29,16 @@ class TextRoomConsumer(WebsocketConsumer):
         user_id = text_data_json.get("user_id")
         username = text_data_json.get("username")
         audio = text_data_json.get("audio")
+        is_moderator = text_data_json.get("is_moderator")
 
         SaveMessageView(
             userid=user_id,
             username=username,
             room=int(self.room_name),
             message=message,
-            audio=audio,
+            is_moderator=is_moderator,
+            audio=None,
+            audio_url=audio
         )
         
         # Send message to room group
