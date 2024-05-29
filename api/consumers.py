@@ -34,13 +34,31 @@ class TextRoomConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                "type": "chat_message",
+                "type": "chat_message_dont_save",
                 "message": message,
                 "user_id": user_id,
                 "username": username,
                 "audio": audio,
             },
         )
+
+    def chat_message_dont_save(self, event):
+        message = event["message"]
+        username = event.get("username", None)
+        user_id = event.get("user_id", None)
+        audio = event.get("audio", None)
+
+        self.send(
+            text_data=json.dumps(
+                {
+                    "message": message,
+                    "user_id": user_id,
+                    "username": username,
+                    "audio": audio,
+                }
+            )
+        )
+
 
     def chat_message(self, event):
         message = event["message"]
