@@ -30,6 +30,14 @@ class TextRoomConsumer(WebsocketConsumer):
         username = text_data_json.get("username")
         audio = text_data_json.get("audio")
 
+        SaveMessageView(
+            userid=user_id,
+            username=username,
+            room=int(self.room_name),
+            message=message,
+            audio=audio,
+        )
+        
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
@@ -65,17 +73,6 @@ class TextRoomConsumer(WebsocketConsumer):
         username = event.get("username", None)
         user_id = event.get("user_id", None)
         audio = event.get("audio", None)
-
-        SaveMessageView(
-            userid=user_id,
-            username=username,
-            room=int(self.room_name),
-            message=message,
-            is_moderator=is_moderator,
-            audio=None,
-            audio_url=audio
-
-        )
 
         self.send(
             text_data=json.dumps(
