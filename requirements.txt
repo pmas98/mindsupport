@@ -9,3 +9,4 @@ python-dotenv==1.0.1
 gunicorn==21.2.0
 daphne==3.0.2
 django-cors-headers==4.3.1
+requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
