@@ -8,7 +8,6 @@ class Usuario(AbstractUser):
     blocked = models.BooleanField(default=False)
     block_reason = models.TextField(blank=True, null=True, max_length=255)
     groups = models.ManyToManyField("auth.Group", related_name="usuarios")
-    color = models.CharField(max_length=10, default="bg-red-400")
     user_permissions = models.ManyToManyField(
         "auth.Permission", related_name="usuarios"
     )
@@ -20,7 +19,7 @@ class Usuario(AbstractUser):
 class Moderador(models.Model):
     user = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     reason = models.TextField()
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
 
 
 class Tema(models.Model):

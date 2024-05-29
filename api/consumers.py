@@ -29,27 +29,43 @@ class TextRoomConsumer(WebsocketConsumer):
         user_id = text_data_json.get("user_id")
         username = text_data_json.get("username")
         audio = text_data_json.get("audio")
-        is_moderator = text_data_json.get("is_moderator")
+
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                "type": "chat_message",
+                "type": "chat_message_dont_save",
                 "message": message,
                 "user_id": user_id,
                 "username": username,
                 "audio": audio,
-                "is_moderator": is_moderator,
             },
         )
+
+    def chat_message_dont_save(self, event):
+        message = event["message"]
+        username = event.get("username", None)
+        user_id = event.get("user_id", None)
+        audio = event.get("audio", None)
+
+        self.send(
+            text_data=json.dumps(
+                {
+                    "message": message,
+                    "user_id": user_id,
+                    "username": username,
+                    "audio": audio,
+                }
+            )
+        )
+
 
     def chat_message(self, event):
         message = event["message"]
         username = event.get("username", None)
         user_id = event.get("user_id", None)
         audio = event.get("audio", None)
-        is_moderator = event.get("is_moderator", None)
-        
+
         SaveMessageView(
             userid=user_id,
             username=username,
@@ -58,12 +74,12 @@ class TextRoomConsumer(WebsocketConsumer):
             is_moderator=is_moderator,
             audio=None,
             audio_url=audio
+
         )
 
         self.send(
             text_data=json.dumps(
                 {
-                    "is_moderator": is_moderator,
                     "message": message,
                     "user_id": user_id,
                     "username": username,

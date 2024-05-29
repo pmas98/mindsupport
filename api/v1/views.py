@@ -17,21 +17,7 @@ from firebase_admin import firestore, storage
 import tempfile
 from datetime import timedelta
 from channels.generic.websocket import WebsocketConsumer
-from django.contrib.auth import logout
-from django.contrib.auth.views import LogoutView
-from django.urls import reverse_lazy
 
-class UserColorView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def patch(self, request):
-        user = request.user
-        color = request.data.get("color")
-        usuario = Usuario.objects.get(username=user)
-        usuario.color = color
-        usuario.save()
-        response_data = {"message": "User color updated successfully!"}
-        return Response(response_data, status=status.HTTP_200_OK)
 
 class UserDeleteView(APIView):
     permission_classes = [IsAuthenticated]
@@ -44,6 +30,7 @@ class UserDeleteView(APIView):
         db = firestore.client()
 
         collectionName = "roomChat"
+        print(user_id)
 
         docs = db.collection(collectionName).where("userId", "==", user_id).stream()
 
@@ -90,10 +77,6 @@ class UserLoginView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserLogoutView(LogoutView):
-    def get(self, request, *args, **kwargs):
-        logout(request)
-        return super().get(request, *args, **kwargs)
 
 class ThemesView(APIView):
     permission_classes = [AllowAny]
@@ -104,8 +87,9 @@ class ThemesView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        name = request.data.get("name")
-        Tema.objects.create(name=name)
+        serializer = TemaSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         response_data = {"message": "Theme created successfully!"}
         return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -139,15 +123,6 @@ class RoomUserView(APIView):
         user = request.user
         usuario_id = Usuario.objects.get(username=user).id
         request.data["usuario"] = usuario_id
-        try:
-            userInRoom = RoomUser.objects.get(room=request.data["sala"], user=usuario_id)
-        except RoomUser.DoesNotExist:
-            userInRoom = None
-
-        if userInRoom:
-            response_data = {"message": "User already in room!"}
-            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
-        
         serializer = RoomUserSerializer(
             data=request.data, context={"usuario": usuario_id}
         )
@@ -161,27 +136,11 @@ class RemoveUserRoomView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        db = firestore.client()
         room_id = request.data.get("sala")
         user = request.user
         usuario = Usuario.objects.get(username=user).id
         sala = Sala.objects.get(id=room_id)
         room_user = RoomUser.objects.filter(room=sala, user=usuario).first()
-
-        room_chat_ref = db.collection('roomChat')
-
-        # Create a query to fetch documents with the same user ID and room ID
-        query = room_chat_ref.where('user_id', '==', int(user.id)).where('room', '==', int(room_id))
-
-        # Get the documents that match the query
-        docs = query.stream()
-
-        # Iterate over the documents and delete them
-        for doc in docs:
-            print(f'Deleting document {doc.id}')
-            doc_ref = room_chat_ref.document(doc.id)
-            doc_ref.delete()
-            
         if room_user:
             room_user.delete()
             response_data = {"message": "RoomUser deleted successfully!"}
@@ -189,44 +148,6 @@ class RemoveUserRoomView(APIView):
         else:
             response_data = {"message": "RoomUser not found!"}
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
-
-class RemoveUserIdRoomView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        db = firestore.client()
-        room_id = request.data.get("sala")
-        is_moderator = request.data.get("is_moderator")
-        user = request.user
-        
-        if is_moderator:
-            user_id = request.data.get("user")
-            usuarioADeletar = Usuario.objects.get(id=user_id)
-            
-            sala = Sala.objects.get(id=room_id)
-            room_user = RoomUser.objects.filter(room=sala, user=usuarioADeletar).first()
-
-            room_chat_ref = db.collection('roomChat')
-
-            # Create a query to fetch documents with the same user ID and room ID
-            query = room_chat_ref.where('user_id', '==', int(user_id)).where('room', '==', int(room_id))
-            print(user.id, room_id)
-            # Get the documents that match the query
-            docs = query.stream()
-
-            # Iterate over the documents and delete them
-            for doc in docs:
-                print(f'Deleting document {doc.id}')
-                doc_ref = room_chat_ref.document(doc.id)
-                doc_ref.delete()
-                
-            if room_user:
-                room_user.delete()
-                response_data = {"message": "RoomUser deleted successfully!"}
-                return Response(response_data, status=status.HTTP_200_OK)
-            else:
-                response_data = {"message": "RoomUser not found!"}
-                return Response(response_data, status=status.HTTP_404_NOT_FOUND)
 
 
 class UserView(APIView):
@@ -239,20 +160,10 @@ class UserView(APIView):
         data = {
             "id": usuario.id,
             "username": usuario.username,
-            "color": usuario.color,
-            "is_moderator": True if (moderador) else False,
+            "is_moderator": True if (moderador and moderador.active) else False,
             "created_at": datetime.strftime(usuario.date_joined, "%b %d"),
         }
-
         return Response(data, status=status.HTTP_200_OK)
-    def patch(self, request):
-        user = request.user
-        nickname = request.data.get("nickname")
-        usuario = Usuario.objects.get(username=user)
-        usuario.username = nickname
-        usuario.save()
-        response_data = {"message": "User updated successfully!"}
-        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class BlockUserView(APIView):
@@ -341,9 +252,8 @@ def SaveMessageView(userid, username, room, message, audio, is_moderator, audio_
             "message": message,
             "timestamp": datetime.now(),
             "audio": audio_url if audio_url else "",
-            "is_moderator": is_moderator,
+            "is_moderator": is_moderator
         })
-        print("Message added successfully.")
 
     except Exception as e:
         print(f"Error adding message: {e}")
